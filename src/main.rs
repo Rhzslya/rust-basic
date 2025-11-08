@@ -271,7 +271,7 @@ fn data_copy() {
     let a = 10;
     let mut b = a;
 
-    b = 20;
+    b += 10;
 
     println!("{}", a);
     println!("{}", b)
@@ -590,4 +590,131 @@ fn string_slice() {
 
     let last_name: &str = &name[6..];
     println!("{}", last_name);
+}
+
+struct Person {
+    first_name: String,
+    middle_name: String,
+    last_name: String,
+    age: u8,
+}
+
+impl Person {
+    fn say_hello(&self, name: &str) {
+        println!("Hello {}, my name is {}", name, self.middle_name);
+    }
+}
+
+fn print_person(person: &Person) {
+    println!(
+        "First Name: {}, Last Name: {}, Age: {}",
+        person.first_name, person.last_name, person.age
+    );
+}
+
+#[test]
+fn struct_person() {
+    let first_name = String::from("Rizqi");
+    let middle_name = String::from("Aulia");
+    let last_name = String::from("Sabilla");
+
+    let person = Person {
+        first_name,
+        middle_name,
+        last_name,
+        age: 20,
+    };
+
+    // println!("{}", first_name); //Tidak bisa digunakan karena ownership sudah pindah ke struct Person
+    print_person(&person);
+
+    let person2 = Person {
+        first_name: person.first_name.clone(),
+        middle_name: person.middle_name.clone(),
+        last_name: person.last_name.clone(),
+
+        ..person
+    };
+
+    print_person(&person2);
+    print_person(&person);
+}
+
+struct GeoPoint(f64, f64);
+
+impl GeoPoint {
+    fn new(long: f64, lat: f64) -> GeoPoint {
+        GeoPoint(long, lat)
+    }
+}
+
+#[test]
+fn test_associated_function() {
+    let geo_point = GeoPoint::new(1.234, 5.678);
+    println!("{}", geo_point.0);
+    println!("{}", geo_point.1);
+}
+
+#[test]
+fn test_tuple_struct() {
+    let geo_point = GeoPoint(1.234, 5.678);
+    println!("{}", geo_point.0);
+    println!("{}", geo_point.1);
+}
+
+struct Nothing;
+
+#[test]
+fn test_unit_struct() {
+    let _nothing1 = Nothing;
+    let _nothing2 = Nothing;
+}
+
+#[test]
+fn test_method() {
+    let person = Person {
+        first_name: String::from("Rizqi"),
+        middle_name: String::from("Aulia"),
+        last_name: String::from("Sabilla"),
+        age: 20,
+    };
+
+    person.say_hello("Seira");
+}
+
+enum Level {
+    Regular,
+    Premium,
+    Platinum,
+}
+
+#[test]
+fn test_enum() {
+    let _level1 = Level::Regular;
+    let _level2 = Level::Premium;
+    let _level3 = Level::Platinum;
+}
+
+enum Payment {
+    CreditCard(String),
+    BankTransfer(String, String),
+    Ewallet(String),
+}
+
+impl Payment {
+    fn pay(&self, amount: u32) {
+        println!("Paying amount {}", amount);
+    }
+}
+
+#[test]
+fn test_payment() {
+    let _payment1 = Payment::CreditCard(String::from("1234-5678-9012-3456"));
+    _payment1.pay(1000);
+
+    let _payment2 = Payment::BankTransfer(String::from("Bank ABC"), String::from("9876543210"));
+    _payment2.pay(2000);
+
+    let _payment3 = Payment::Ewallet(String::from("1234567890"));
+    _payment3.pay(3000);
 }
